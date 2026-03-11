@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
+import { createHashRouter, RouterProvider, useNavigate } from "react-router";
+import { Dashboard } from "./components/dashboard";
 
 // ─── Scroll-reveal hook ───────────────────────────────────────────────────────
 function useFadeIn(threshold = 0.12) {
@@ -269,7 +271,7 @@ function HeatmapMockup() {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", justifyContent: "space-around", marginBottom: 3 }}>
-            {days.map(d => <span key={d} style={{ color: "#2e3060", fontSize: 8 }}>{d}</span>)}
+            {days.map((d, i) => <span key={i} style={{ color: "#2e3060", fontSize: 8 }}>{d}</span>)}
           </div>
           {heat.map((row, ri) => (
             <div key={ri} style={{ display: "flex", gap: 3, marginBottom: 3 }}>
@@ -371,13 +373,16 @@ function TrendMockup() {
   );
 }
 
-// ─── Main App ─────────────────────────────────────────────────────────────────
-export default function App() {
+// ─── Landing Page ─────────────────────────────────────────────────────────────
+function LandingPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authName, setAuthName] = useState("");
 
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 40);
@@ -388,6 +393,19 @@ export default function App() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email.trim()) setSubmitted(true);
+  };
+
+  const handleAuthSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowAuth(false);
+    setAuthEmail("");
+    setAuthName("");
+    navigate("/stats");
+  };
+
+  const handleOAuthLogin = (_provider: string) => {
+    setShowAuth(false);
+    navigate("/stats");
   };
 
   const features = [
@@ -1076,13 +1094,15 @@ export default function App() {
             </p>
 
             {/* Form */}
-            <form onSubmit={e => { e.preventDefault(); setShowAuth(false); }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <form onSubmit={handleAuthSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {authMode === "signup" && (
                 <div>
                   <label style={{ display: "block", color: "#4b5090", fontSize: 12, letterSpacing: "0.06em", marginBottom: 6 }}>NAME</label>
                   <input
                     type="text"
                     placeholder="Your name"
+                    value={authName}
+                    onChange={e => setAuthName(e.target.value)}
                     style={{
                       width: "100%", background: "#0a0b12",
                       border: "1px solid #1e2035", borderRadius: 10,
@@ -1100,6 +1120,9 @@ export default function App() {
                 <input
                   type="email"
                   placeholder="you@example.com"
+                  value={authEmail}
+                  onChange={e => setAuthEmail(e.target.value)}
+                  required
                   style={{
                     width: "100%", background: "#0a0b12",
                     border: "1px solid #1e2035", borderRadius: 10,
@@ -1163,6 +1186,7 @@ export default function App() {
             {/* Google button */}
             <button
               type="button"
+              onClick={() => handleOAuthLogin("Google")}
               style={{
                 width: "100%",
                 background: "transparent",
@@ -1194,6 +1218,7 @@ export default function App() {
             {/* Apple button */}
             <button
               type="button"
+              onClick={() => handleOAuthLogin("Apple")}
               style={{
                 width: "100%",
                 background: "transparent",
@@ -1281,4 +1306,26 @@ export default function App() {
       `}</style>
     </div>
   );
+}
+
+// ─── Stats Page (shareable at /stats) ─────────────────────────────────────────
+function StatsPage() {
+  const navigate = useNavigate();
+  return (
+    <Dashboard
+      userName="Demo"
+      onLogout={() => navigate("/")}
+    />
+  );
+}
+
+// ─── Router ───────────────────────────────────────────────────────────────────
+const router = createHashRouter([
+  { path: "/", Component: LandingPage },
+  { path: "/stats", Component: StatsPage },
+  { path: "*", Component: LandingPage },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
