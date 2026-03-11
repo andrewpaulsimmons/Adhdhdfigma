@@ -34,7 +34,7 @@ function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; 
   );
 }
 
-// ─── Brand name component ─────────────────────────────────────────────────────
+// ─── Brand name component ────────────────────────────────────────────────────
 function Brand({ size = 15, dimColor = "#e2e4f3", accentColor = "#818cf8" }: { size?: number; dimColor?: string; accentColor?: string }) {
   return (
     <span style={{ fontFamily: "'DM Mono', monospace", fontSize: size }}>
@@ -46,10 +46,22 @@ function Brand({ size = 15, dimColor = "#e2e4f3", accentColor = "#818cf8" }: { s
 // ─── Mockup: Hero App UI ──────────────────────────────────────────────────────
 function HeroMockup() {
   const [progress, setProgress] = useState(62);
+  const [seconds, setSeconds] = useState(5567); // starts at 1:32:47
   useEffect(() => {
-    const t = setInterval(() => setProgress(p => p >= 100 ? 62 : p + 0.25), 100);
+    const t = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => clearInterval(t);
   }, []);
+  useEffect(() => {
+    // Progress creeps slowly: 90 min = 5400s total, start at 62%
+    const t = setInterval(() => setProgress(p => p >= 100 ? 62 : p + (100 / 5400)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const formatTime = (s: number) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  };
   return (
     <div style={{
       background: "#0a0b12",
@@ -99,7 +111,7 @@ function HeroMockup() {
             <div style={{ color: "#818cf8", fontSize: 10, letterSpacing: "0.1em", marginBottom: 2 }}>● RECORDING</div>
             <div style={{ color: "#e2e4f3", fontSize: 13 }}>Deep Work — Project Alpha</div>
           </div>
-          <div style={{ marginLeft: "auto", color: "#818cf8", fontSize: 15 }}>1:32:47</div>
+          <div style={{ marginLeft: "auto", color: "#818cf8", fontSize: 15 }}>{formatTime(seconds)}</div>
         </div>
         {/* Progress bar */}
         <div style={{ background: "#1a1c35", borderRadius: 4, height: 5, overflow: "hidden" }}>
@@ -112,7 +124,7 @@ function HeroMockup() {
           }} />
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-          <span style={{ color: "#3d4270", fontSize: 10 }}>90 min block</span>
+          <span style={{ color: "#3d4270", fontSize: 10 }}>focus time</span>
           <span style={{ color: "#818cf8", fontSize: 10 }}>{Math.round(progress)}% complete</span>
         </div>
       </div>
@@ -364,6 +376,8 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [navScrolled, setNavScrolled] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "signup">("login");
 
   useEffect(() => {
     const onScroll = () => setNavScrolled(window.scrollY > 40);
@@ -427,27 +441,51 @@ export default function App() {
           }}>◈</div>
           <Brand size={15} dimColor="#e2e4f3" accentColor="#818cf8" />
         </div>
-        <a
-          href="#cta"
-          onClick={e => { e.preventDefault(); document.getElementById("cta")?.scrollIntoView({ behavior: "smooth" }); }}
-          style={{
-            background: "rgba(99,102,241,0.15)",
-            border: "1px solid rgba(99,102,241,0.35)",
-            color: "#818cf8",
-            borderRadius: 8, padding: "8px 18px",
-            fontSize: 13, cursor: "pointer",
-            textDecoration: "none",
-            transition: "all 0.2s",
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(99,102,241,0.25)";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLAnchorElement).style.background = "rgba(99,102,241,0.15)";
-          }}
-        >
-          Get early access
-        </a>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <a
+            href="#cta"
+            onClick={e => { e.preventDefault(); document.getElementById("cta")?.scrollIntoView({ behavior: "smooth" }); }}
+            style={{
+              background: "rgba(99,102,241,0.15)",
+              border: "1px solid rgba(99,102,241,0.35)",
+              color: "#818cf8",
+              borderRadius: 8, padding: "8px 18px",
+              fontSize: 13, cursor: "pointer",
+              textDecoration: "none",
+              transition: "all 0.2s",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLAnchorElement).style.background = "rgba(99,102,241,0.25)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLAnchorElement).style.background = "rgba(99,102,241,0.15)";
+            }}
+          >
+            Get early access
+          </a>
+          <button
+            onClick={() => { setAuthMode("login"); setShowAuth(true); }}
+            style={{
+              background: "transparent",
+              border: "1px solid #2a2c45",
+              color: "#8b8fb8",
+              borderRadius: 8, padding: "8px 18px",
+              fontSize: 13, cursor: "pointer",
+              transition: "all 0.2s",
+              fontFamily: "'Inter', sans-serif",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "#818cf8";
+              (e.currentTarget as HTMLButtonElement).style.color = "#e2e4f3";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "#2a2c45";
+              (e.currentTarget as HTMLButtonElement).style.color = "#8b8fb8";
+            }}
+          >
+            Log in
+          </button>
+        </div>
       </nav>
 
       {/* ── HERO ── */}
@@ -968,6 +1006,242 @@ export default function App() {
           adhdhd.com · © 2026
         </span>
       </footer>
+
+      {/* ── AUTH LIGHTBOX ── */}
+      {showAuth && (
+        <div
+          onClick={() => setShowAuth(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 200,
+            background: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(8px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            animation: "fadeInUp 0.25s ease",
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: "#0d0e18",
+              border: "1px solid #1e2035",
+              borderRadius: 20,
+              padding: "40px",
+              width: "100%",
+              maxWidth: 420,
+              margin: "0 24px",
+              position: "relative",
+              boxShadow: "0 0 80px rgba(99,102,241,0.12)",
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setShowAuth(false)}
+              style={{
+                position: "absolute", top: 16, right: 16,
+                background: "transparent", border: "none",
+                color: "#3a3d5c", fontSize: 20, cursor: "pointer",
+                width: 32, height: 32, display: "flex",
+                alignItems: "center", justifyContent: "center",
+                borderRadius: 8, transition: "color 0.2s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = "#e2e4f3")}
+              onMouseLeave={e => (e.currentTarget.style.color = "#3a3d5c")}
+            >
+              ✕
+            </button>
+
+            {/* Logo */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: 7,
+                background: "linear-gradient(135deg, #6366f1, #818cf8)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 13,
+              }}>◈</div>
+              <Brand size={15} dimColor="#e2e4f3" accentColor="#818cf8" />
+            </div>
+
+            {/* Title */}
+            <h2 style={{
+              fontSize: 22, fontWeight: 700, color: "#e2e4f3",
+              marginBottom: 6, lineHeight: 1.3,
+            }}>
+              {authMode === "login" ? "Welcome back" : "Create your account"}
+            </h2>
+            <p style={{ color: "#6b6f98", fontSize: 14, marginBottom: 28, lineHeight: 1.5 }}>
+              {authMode === "login"
+                ? "Log in to see your focus data."
+                : "Start tracking your productivity in HD."
+              }
+            </p>
+
+            {/* Form */}
+            <form onSubmit={e => { e.preventDefault(); setShowAuth(false); }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {authMode === "signup" && (
+                <div>
+                  <label style={{ display: "block", color: "#4b5090", fontSize: 12, letterSpacing: "0.06em", marginBottom: 6 }}>NAME</label>
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    style={{
+                      width: "100%", background: "#0a0b12",
+                      border: "1px solid #1e2035", borderRadius: 10,
+                      padding: "12px 16px", color: "#e2e4f3", fontSize: 14,
+                      outline: "none", fontFamily: "'Inter', sans-serif",
+                      transition: "border-color 0.2s",
+                    }}
+                    onFocus={e => (e.currentTarget.style.borderColor = "rgba(99,102,241,0.4)")}
+                    onBlur={e => (e.currentTarget.style.borderColor = "#1e2035")}
+                  />
+                </div>
+              )}
+              <div>
+                <label style={{ display: "block", color: "#4b5090", fontSize: 12, letterSpacing: "0.06em", marginBottom: 6 }}>EMAIL</label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  style={{
+                    width: "100%", background: "#0a0b12",
+                    border: "1px solid #1e2035", borderRadius: 10,
+                    padding: "12px 16px", color: "#e2e4f3", fontSize: 14,
+                    outline: "none", fontFamily: "'Inter', sans-serif",
+                    transition: "border-color 0.2s",
+                  }}
+                  onFocus={e => (e.currentTarget.style.borderColor = "rgba(99,102,241,0.4)")}
+                  onBlur={e => (e.currentTarget.style.borderColor = "#1e2035")}
+                />
+              </div>
+              <div>
+                <label style={{ display: "block", color: "#4b5090", fontSize: 12, letterSpacing: "0.06em", marginBottom: 6 }}>PASSWORD</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  style={{
+                    width: "100%", background: "#0a0b12",
+                    border: "1px solid #1e2035", borderRadius: 10,
+                    padding: "12px 16px", color: "#e2e4f3", fontSize: 14,
+                    outline: "none", fontFamily: "'Inter', sans-serif",
+                    transition: "border-color 0.2s",
+                  }}
+                  onFocus={e => (e.currentTarget.style.borderColor = "rgba(99,102,241,0.4)")}
+                  onBlur={e => (e.currentTarget.style.borderColor = "#1e2035")}
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{
+                  marginTop: 6,
+                  background: "linear-gradient(135deg, #6366f1, #818cf8)",
+                  border: "none", color: "#fff",
+                  borderRadius: 10, padding: "14px",
+                  fontSize: 15, fontWeight: 600, cursor: "pointer",
+                  fontFamily: "'Inter', sans-serif",
+                  boxShadow: "0 0 32px rgba(99,102,241,0.2)",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 40px rgba(99,102,241,0.35)";
+                  (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 32px rgba(99,102,241,0.2)";
+                  (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+                }}
+              >
+                {authMode === "login" ? "Log in" : "Create account"}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "24px 0" }}>
+              <div style={{ flex: 1, height: 1, background: "#1e2035" }} />
+              <span style={{ color: "#3a3d5c", fontSize: 12 }}>or</span>
+              <div style={{ flex: 1, height: 1, background: "#1e2035" }} />
+            </div>
+
+            {/* Google button */}
+            <button
+              type="button"
+              style={{
+                width: "100%",
+                background: "transparent",
+                border: "1px solid #1e2035",
+                borderRadius: 10, padding: "12px",
+                color: "#8b8fb8", fontSize: 14,
+                cursor: "pointer", fontFamily: "'Inter', sans-serif",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(99,102,241,0.3)";
+                (e.currentTarget as HTMLButtonElement).style.color = "#e2e4f3";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#1e2035";
+                (e.currentTarget as HTMLButtonElement).style.color = "#8b8fb8";
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            {/* Apple button */}
+            <button
+              type="button"
+              style={{
+                width: "100%",
+                background: "transparent",
+                border: "1px solid #1e2035",
+                borderRadius: 10, padding: "12px",
+                color: "#8b8fb8", fontSize: 14,
+                cursor: "pointer", fontFamily: "'Inter', sans-serif",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
+                transition: "all 0.2s",
+                marginTop: 10,
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(99,102,241,0.3)";
+                (e.currentTarget as HTMLButtonElement).style.color = "#e2e4f3";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "#1e2035";
+                (e.currentTarget as HTMLButtonElement).style.color = "#8b8fb8";
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+              </svg>
+              Continue with Apple
+            </button>
+
+            {/* Toggle mode */}
+            <p style={{ textAlign: "center", marginTop: 20, color: "#6b6f98", fontSize: 13 }}>
+              {authMode === "login" ? "Don't have an account? " : "Already have an account? "}
+              <button
+                type="button"
+                onClick={() => setAuthMode(authMode === "login" ? "signup" : "login")}
+                style={{
+                  background: "none", border: "none",
+                  color: "#818cf8", fontSize: 13,
+                  cursor: "pointer", textDecoration: "none",
+                  fontFamily: "'Inter', sans-serif",
+                  padding: 0,
+                }}
+                onMouseEnter={e => (e.currentTarget.style.textDecoration = "underline")}
+                onMouseLeave={e => (e.currentTarget.style.textDecoration = "none")}
+              >
+                {authMode === "login" ? "Sign up" : "Log in"}
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Global styles */}
       <style>{`
