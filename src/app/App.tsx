@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, ReactNode } from "react";
-import { createHashRouter, RouterProvider, useNavigate } from "react-router";
+import { createBrowserRouter, RouterProvider, useNavigate } from "react-router";
 import { Dashboard } from "./components/dashboard";
+import { FocusTracker } from "./components/focus-tracker";
+import { FocusTrackerWeb } from "./components/focus-tracker-web";
+
 
 // ─── Scroll-reveal hook ───────────────────────────────────────────────────────
 function useFadeIn(threshold = 0.12) {
@@ -374,7 +377,7 @@ function TrendMockup() {
 }
 
 // ─── Landing Page ─────────────────────────────────────────────────────────────
-function LandingPage() {
+export function LandingPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -400,12 +403,12 @@ function LandingPage() {
     setShowAuth(false);
     setAuthEmail("");
     setAuthName("");
-    navigate("/stats");
+    navigate("/tracker");
   };
 
   const handleOAuthLogin = (_provider: string) => {
     setShowAuth(false);
-    navigate("/stats");
+    navigate("/tracker");
   };
 
   const features = [
@@ -1308,20 +1311,45 @@ function LandingPage() {
   );
 }
 
-// ─── Stats Page (shareable at /stats) ─────────────────────────────────────────
+// ─── Tracker Page (web-native, default post-login) ────────────────────────────
+function TrackerPage() {
+  const navigate = useNavigate();
+  return (
+    <FocusTrackerWeb
+      onLogout={() => navigate("/")}
+      onViewStats={() => navigate("/stats")}
+    />
+  );
+}
+
+// ─── App Page (macOS-style focus tracker) ─────────────────────────────────────
+function AppPage() {
+  const navigate = useNavigate();
+  return (
+    <FocusTracker
+      onLogout={() => navigate("/")}
+      onViewStats={() => navigate("/stats")}
+    />
+  );
+}
+
+// ─── Stats Page (detailed analytics) ──────────────────────────────────────────
 function StatsPage() {
   const navigate = useNavigate();
   return (
     <Dashboard
-      userName="Demo"
+      userName="Andrew"
       onLogout={() => navigate("/")}
+      onBack={() => navigate("/tracker")}
     />
   );
 }
 
 // ─── Router ───────────────────────────────────────────────────────────────────
-const router = createHashRouter([
+const router = createBrowserRouter([
   { path: "/", Component: LandingPage },
+  { path: "/tracker", Component: TrackerPage },
+  { path: "/app", Component: AppPage },
   { path: "/stats", Component: StatsPage },
   { path: "*", Component: LandingPage },
 ]);

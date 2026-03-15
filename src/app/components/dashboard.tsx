@@ -278,7 +278,7 @@ function StatCard({ label, value, sub, trend }: { label: string; value: string; 
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────────
-export function Dashboard({ userName, onLogout }: { userName: string; onLogout: () => void }) {
+export function Dashboard({ userName, onLogout, onBack }: { userName: string; onLogout: () => void; onBack?: () => void }) {
   const [activeTab, setActiveTab] = useState<"today" | "week" | "insights">("today");
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -311,7 +311,25 @@ export function Dashboard({ userName, onLogout }: { userName: string; onLogout: 
         backdropFilter: "blur(12px)",
         position: "sticky", top: 0, zIndex: 50,
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {onBack && (
+            <button
+              onClick={onBack}
+              style={{
+                background: "transparent", border: "1px solid #2a2c45",
+                color: "#6b6f98", borderRadius: 8, padding: "6px 12px",
+                fontSize: 12, cursor: "pointer", fontFamily: "'Inter', sans-serif",
+                transition: "all 0.2s", display: "flex", alignItems: "center", gap: 6,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "#818cf8"; e.currentTarget.style.color = "#e2e4f3"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "#2a2c45"; e.currentTarget.style.color = "#6b6f98"; }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9 3L5 7L9 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Back
+            </button>
+          )}
           <div style={{
             width: 28, height: 28, borderRadius: 7,
             background: "linear-gradient(135deg, #6366f1, #818cf8)",

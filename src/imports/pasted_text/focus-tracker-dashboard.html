@@ -1,0 +1,130 @@
+Build a desktop-first web app that recreates this exact interface: a dark macOS-style focus/time-tracking dashboard.
+
+What the app is
+- This is a daily focus tracker / session log.
+- The left sidebar is a date navigator.
+- The main area shows all recorded work sessions for the selected day.
+- A large bottom control card shows the current timer state, elapsed time, and progress toward a daily focus goal.
+
+Overall visual direction
+- Make it feel like a polished native macOS app, not a generic SaaS dashboard.
+- Use a near-black background with subtle navy tones.
+- Use very soft rounded corners everywhere.
+- Use thin, low-contrast borders and very subtle shadows.
+- Accent color is indigo/periwinkle.
+- Typography should feel Apple-like: SF Pro Display/Text or a very close system sans.
+- All times should use tabular numerals.
+
+Canvas and shell
+- Center one large application window on a black page background.
+- Window should feel about 90% of the viewport, with max width around 1550px and height around 1080px.
+- Outer shell radius around 32px.
+- Add a thin gray border around the whole shell.
+- Interior background should be a very dark charcoal/navy.
+
+Main layout
+- Two-column layout.
+- Left sidebar width: about 390 to 410px.
+- Right content pane fills the remaining width.
+- Sidebar and main pane should both be inset inside the outer shell with comfortable padding.
+- Keep spacing generous and minimal.
+
+Sidebar
+- Top-left: three macOS traffic-light circles: red, yellow, green.
+- Top-right: a small outlined sidebar/layout toggle icon.
+- Under that: month label in muted gray, reading “March 2026”.
+- Below it: one selected day card with a rounded gray pill background.
+- Selected day card text:
+  - Main label: “12 - Thursday”
+  - Right-aligned small total: “0.2h”
+- The selected day text should use the indigo accent.
+- Sidebar background should be slightly darker than the main pane.
+- There should be a divider line above the footer.
+- Footer contains a profile row:
+  - Circular avatar on the left
+  - Bold white display name, truncated with ellipsis: “Andrew Paul Si...”
+  - Smaller muted username below, truncated: “andrewpaulsimmo...”
+  - Small action/logout/share icon on the far right
+- Footer should feel pinned to the bottom.
+
+Main content header
+- Left side:
+  - Large bold title: “Today”
+  - Smaller muted date beside it: “3/12/26”
+- Right side:
+  - Muted label “Total:”
+  - Bold white total time: “0:10:24”
+  - Muted item count: “4 items”
+- Header should sit on a subtly darker horizontal strip.
+
+Session list
+- Under the header, show 4 rows.
+- Each row should have:
+  - A tiny indigo dot at the far left
+  - A muted time range in the middle
+  - A bold white duration aligned right
+- Rows should be spaced vertically with very faint separators.
+- Exact rows:
+  - 9:01 PM -> 9:01 PM | 0:00:03
+  - 9:01 PM -> 9:02 PM | 0:00:27
+  - 9:03 PM -> 9:03 PM | 0:00:06
+  - 11:44 PM -> 11:53 PM | 0:09:46
+- Leave a large amount of empty space below the rows so the bottom timer card feels anchored separately.
+
+Bottom session control card
+- Pin a large rounded card near the bottom of the main pane.
+- Card background should be slightly lighter than the page but still very dark.
+- Card should have a thin border and soft radius around 20 to 24px.
+- Left side of the card:
+  - Large circular button with a subtle outline
+  - Purple/indigo play icon centered inside
+- Next to button:
+  - Small uppercase muted status label: “PAUSED”
+  - Large white label below: “Work Session”
+- Right side of the card:
+  - Large timer text: “0:10:24”
+- Lower part of the card:
+  - Long, thin progress bar line spanning most of the width
+  - Bottom-left small accent text: “4%”
+  - Bottom-right a muted pill label: “Daily Focus Target: 4h” with a tiny edit icon
+
+Interaction behavior
+- Clicking a day in the sidebar selects it and updates the session list, total time, and item count.
+- The selected day card should highlight with a filled gray background.
+- The play button toggles the session between paused and running.
+- When running:
+  - Replace the play icon with pause
+  - Change status text from “PAUSED” to “RUNNING”
+  - Increment the main timer once per second
+- Progress percent is based on total focused time for the selected day divided by the daily target.
+- Editing the daily target should update the progress percentage and progress bar.
+- The sidebar layout icon should collapse/expand the sidebar.
+- Profile row can open a simple account menu.
+- The mac traffic-light buttons are decorative in the browser version.
+
+Motion and feel
+- Use subtle 150ms to 200ms transitions.
+- Hover states should slightly brighten surfaces, not glow.
+- Avoid flashy animation.
+- Keep the experience calm, quiet, and premium.
+
+Exact content to preload
+- Month: March 2026
+- Selected date: March 12, 2026
+- Header title: Today
+- Header date: 3/12/26
+- Total time: 0:10:24
+- Item count: 4
+- Status: PAUSED
+- Session name: Work Session
+- Daily target: 4h
+- Progress: 4%
+
+Implementation notes
+- Build this as a real interactive web UI, not just a static mock.
+- Use reusable components for AppShell, Sidebar, DayItem, Header, SessionRow, TimerCard, ProgressBar, and ProfileFooter.
+- Use CSS variables for colors, radii, borders, and spacing.
+- Make the layout responsive, but prioritize matching the desktop screenshot first.
+- On smaller screens, collapse the sidebar into a drawer or stack it above the content while preserving the same visual language.
+- Preserve truncation with ellipsis where text is clipped.
+- Use accessible buttons, labels, and keyboard focus states.
