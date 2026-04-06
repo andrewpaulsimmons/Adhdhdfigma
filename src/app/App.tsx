@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, useNavigate } from "react-router";
 import { Dashboard } from "./components/dashboard";
 import { FocusTracker } from "./components/focus-tracker";
 import { FocusTrackerWeb } from "./components/focus-tracker-web";
+import { WatchFace } from "./components/watch-face";
 
 
 // ─── Scroll-reveal hook ───────────────────────────────────────────────────────
@@ -1345,12 +1346,17 @@ function StatsPage() {
   );
 }
 
+function WatchPage() {
+  return <WatchFace />;
+}
+
 // ─── Router ───────────────────────────────────────────────────────────────────
 const router = createBrowserRouter([
   { path: "/", Component: LandingPage },
   { path: "/tracker", Component: TrackerPage },
   { path: "/app", Component: AppPage },
   { path: "/stats", Component: StatsPage },
+  { path: "/watch", Component: WatchPage },
   { path: "*", Component: LandingPage },
 ]);
 
