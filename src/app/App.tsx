@@ -4,6 +4,7 @@ import { Dashboard } from "./components/dashboard";
 import { FocusTracker } from "./components/focus-tracker";
 import { FocusTrackerWeb } from "./components/focus-tracker-web";
 import { WatchFace } from "./components/watch-face";
+import { PatternsView } from "./components/patterns-view";
 
 
 // ─── Scroll-reveal hook ───────────────────────────────────────────────────────
@@ -1319,6 +1320,7 @@ function TrackerPage() {
     <FocusTrackerWeb
       onLogout={() => navigate("/")}
       onViewStats={() => navigate("/stats")}
+      onViewPatterns={() => navigate("/patterns")}
     />
   );
 }
@@ -1346,6 +1348,17 @@ function StatsPage() {
   );
 }
 
+function PatternsPage() {
+  const navigate = useNavigate();
+  return (
+    <PatternsView
+      onBack={() => navigate("/tracker")}
+      onLogout={() => navigate("/")}
+      onViewStats={() => navigate("/stats")}
+    />
+  );
+}
+
 function WatchPage() {
   return <WatchFace />;
 }
@@ -1356,6 +1369,7 @@ const router = createBrowserRouter([
   { path: "/tracker", Component: TrackerPage },
   { path: "/app", Component: AppPage },
   { path: "/stats", Component: StatsPage },
+  { path: "/patterns", Component: PatternsPage },
   { path: "/watch", Component: WatchPage },
   { path: "*", Component: LandingPage },
 ]);

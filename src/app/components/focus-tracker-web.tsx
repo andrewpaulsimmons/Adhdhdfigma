@@ -128,9 +128,11 @@ function Brand({ size = 15 }: { size?: number }) {
 export function FocusTrackerWeb({
   onLogout,
   onViewStats,
+  onViewPatterns,
 }: {
   onLogout: () => void;
   onViewStats: () => void;
+  onViewPatterns?: () => void;
 }) {
   const [days] = useState<DayData[]>(generateMockData);
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -221,6 +223,11 @@ export function FocusTrackerWeb({
               <span className="ftw-nav-link" onClick={onViewStats}>
                 Stats & Insights
               </span>
+              {onViewPatterns && (
+                <span className="ftw-nav-link" onClick={onViewPatterns}>
+                  Patterns
+                </span>
+              )}
             </div>
           </div>
 
@@ -253,6 +260,9 @@ export function FocusTrackerWeb({
           <div className="ftw-mobile-dropdown ftw-mobile-only">
             <span className="ftw-mobile-link active">Tracker</span>
             <span className="ftw-mobile-link" onClick={() => { onViewStats(); setMobileMenuOpen(false); }}>Stats & Insights</span>
+            {onViewPatterns && (
+              <span className="ftw-mobile-link" onClick={() => { onViewPatterns(); setMobileMenuOpen(false); }}>Patterns</span>
+            )}
             <div className="ftw-mobile-divider" />
             <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 0" }}>
               <div className="ftw-avatar" style={{ width: 28, height: 28, fontSize: 12 }}>A</div>

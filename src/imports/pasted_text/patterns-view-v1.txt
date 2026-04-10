@@ -1,0 +1,180 @@
+Build a new “Patterns View v1” for the logged-in macOS app experience in AdhdHD.
+
+Context:
+AdhdHD is not a generic productivity dashboard. It is a clear, honest mirror of what actually happened. The UI should help the user answer:
+1. What happened today?
+2. How variable have my last days been?
+3. When am I usually strongest?
+4. Am I hitting the daily goal I set?
+
+Important product framing:
+- This is a mirror, not a coach.
+- Do not invent causal insights.
+- Do not claim “why” something happened unless the app actually has that data.
+- Use only the data we already track: session start/end times, effective duration, idle-subtracted focus time, labels, grouped days, and daily goal history.
+
+Current app context:
+- Native macOS app using SwiftUI/AppKit hybrid.
+- Main logged-in experience is the detail pane in `ContentView.swift`.
+- Existing data comes from `TimeTrackingManager`.
+- Sessions are represented by `TimeSession`.
+- We already have:
+  - `allSessions`
+  - `todaySessions`
+  - `selectedDaySessions`
+  - `dayGroups`
+  - `dailyFocusGoal`
+  - `goalForDay(_:)`
+  - `focusedSegments`
+- Existing views to preserve and work with:
+  - `ContentView.swift`
+  - `TimeEntryTableView.swift`
+  - `TodayBlocksView.swift`
+  - `SessionCardView.swift`
+  - `Theme.swift`
+  - `DESIGN.md`
+
+Goal:
+Add a new logged-in analytics/patterns surface that is realistic with current data and visually aligned with the AdhdHD product vision.
+
+Build:
+Create a “Patterns View v1” with these 4 chart modules.
+
+1. Daily Timeline
+Purpose:
+Show the selected day as a time-based visual map of focus blocks across the clock.
+
+Requirements:
+- Use the currently selected day from `tracker.selectedDayDate`.
+- Render focus intervals horizontally across the day timeline.
+- Prefer focused segments over raw session duration when possible, so idle-subtracted time is represented honestly.
+- Show a simple hour scale, ideally covering the active work window or a standard workday range.
+- If there are no sessions on that day, show an honest empty state.
+- Keep it visually calm and information-dense, not noisy.
+
+What it should reveal:
+- when the user started
+- whether the day was fragmented
+- where long blocks happened
+- how the day was distributed
+
+2. Recent Days Bar Chart
+Purpose:
+Show focused-time totals for the last 14 days.
+
+Requirements:
+- Aggregate total effective duration per day.
+- Include days with zero tracked time.
+- Highlight today if present.
+- Optionally indicate whether the daily goal was hit for each day.
+- Make labels readable and compact.
+- Keep it lightweight and native-feeling.
+
+What it should reveal:
+- volatility vs consistency
+- streaks
+- dead days
+- strong days
+
+3. Time-of-Day Heatmap
+Purpose:
+Show which times of day tend to contain focused work.
+
+Requirements:
+- Bucket focus time into time slots, such as 1-hour bins or 30-minute bins.
+- Use recent history only, for example last 28 days, so the view stays relevant.
+- Show days of week on one axis and time slots on the other.
+- Intensity should reflect total focused minutes in each bucket.
+- Use a restrained color scale based on the existing theme.
+- Do not over-explain. Let the visual do the work.
+
+What it should reveal:
+- strongest hours
+- dead zones
+- morning vs afternoon pattern
+- weekday shape
+
+4. Goal vs Actual Trend
+Purpose:
+Show whether the user is generally setting and hitting a realistic daily focus target.
+
+Requirements:
+- For recent days, show actual focused time against the goal for that day.
+- Use `goalForDay(_:)` rather than assuming today’s goal applied historically.
+- If no goal exists for a day, handle that cleanly.
+- This can be bars plus a goal marker, or paired bars, or a thin comparison strip.
+- Keep it visually quiet and truthful.
+
+What it should reveal:
+- whether the goal is often hit
+- whether goals may be too aggressive
+- whether good days are becoming more frequent
+
+Placement / information architecture:
+- This should live in the logged-in screen, not as a marketing/dashboard gimmick.
+- Preserve the current session/history workflow.
+- Add a new dedicated patterns surface in a way that feels natural.
+- Reasonable options:
+  - a segmented toggle between “History” and “Patterns”
+  - a secondary panel beneath the existing day detail
+  - a new section in the main detail pane
+- Choose the option that best fits the current layout and feels coherent with the existing app.
+
+Design direction:
+- Follow the existing AdhdHD visual language in `DESIGN.md`.
+- Dark, serious, precise, calm.
+- No generic bright analytics dashboard feel.
+- No “AI slop” cards.
+- Typography should stay consistent with the app.
+- Visual hierarchy should emphasize clarity, not decoration.
+- Use subtle motion only if already consistent with the app.
+- Charts should feel like evidence, not hype.
+
+Implementation guidance:
+- Create small, focused SwiftUI chart components instead of one giant view.
+- Add lightweight view models or helper structs if needed for chart-ready aggregated data.
+- Put transformation logic close to the data layer or in clearly named helpers, not inline everywhere in view bodies.
+- Prefer reusable derived data helpers from `TimeTrackingManager` or adjacent types.
+- Avoid inventing new persistence unless truly necessary.
+- Do not change the meaning of existing time/session behavior.
+- Do not add fake “insights” text that implies causality.
+
+Suggested output structure in code:
+- `PatternsView.swift`
+- `DailyTimelineChart.swift`
+- `RecentDaysBarChart.swift`
+- `TimeOfDayHeatmap.swift`
+- `GoalTrendChart.swift`
+- optional helper file for aggregation types/functions
+
+Data derivation expectations:
+- Build helper structures for:
+  - per-day total focus duration
+  - selected-day focus segments
+  - heatmap buckets by weekday and hour
+  - goal vs actual day summaries
+- All calculations should be based on effective focused time, not gross elapsed time, unless clearly labeled otherwise.
+- Be careful with calendar/day boundaries and local time.
+
+UX expectations:
+- Empty states should be graceful and honest.
+- If there is too little data, say so simply, e.g. “Not enough data yet.”
+- The first version should already feel useful with only a few days of tracked sessions.
+- The screen should remain fast and readable.
+
+Deliverables:
+1. Implement the new logged-in patterns screen/components.
+2. Wire it into the current logged-in app UI.
+3. Reuse existing app state and theme.
+4. Add any necessary aggregation helpers.
+5. Briefly explain the chosen placement and the reasoning.
+6. Note any follow-up improvements that would require additional data not currently tracked.
+
+Do not build:
+- fake AI explanations
+- causal claims
+- recommendations based on data we do not have
+- productivity coaching copy
+- a noisy analytics dashboard
+
+Build the strongest honest v1 possible from the data we already have.
