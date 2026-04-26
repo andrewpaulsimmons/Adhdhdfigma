@@ -278,7 +278,7 @@ function StatCard({ label, value, sub, trend }: { label: string; value: string; 
 }
 
 // ─── Dashboard ─────────────────────────────────────────────────────────────────
-export function Dashboard({ userName, onLogout, onBack }: { userName: string; onLogout: () => void; onBack?: () => void }) {
+export function Dashboard({ userName, onLogout, onBack, hideHeader = false }: { userName: string; onLogout: () => void; onBack?: () => void; hideHeader?: boolean }) {
   const [activeTab, setActiveTab] = useState<"today" | "week" | "insights">("today");
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -303,6 +303,7 @@ export function Dashboard({ userName, onLogout, onBack }: { userName: string; on
       minHeight: "100vh",
     }}>
       {/* Top nav */}
+      {!hideHeader && (
       <nav style={{
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -362,10 +363,12 @@ export function Dashboard({ userName, onLogout, onBack }: { userName: string; on
           </button>
         </div>
       </nav>
+      )}
 
       {/* Main content */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 24px 80px" }}>
         {/* Greeting */}
+        {!hideHeader && (
         <div style={{ marginBottom: 32 }}>
           <h1 style={{
             fontSize: 28, fontWeight: 700, color: "#e2e4f3",
@@ -379,6 +382,7 @@ export function Dashboard({ userName, onLogout, onBack }: { userName: string; on
             {currentTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
           </p>
         </div>
+        )}
 
         {/* Stat cards row */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 28 }} className="stats-grid">

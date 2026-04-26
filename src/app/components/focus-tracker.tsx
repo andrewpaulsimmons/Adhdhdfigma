@@ -729,77 +729,276 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
           )}
 
           {/* Header */}
-          <div
-            style={{
-              padding: "24px 32px",
-              display: "flex",
-              alignItems: "baseline",
-              justifyContent: "space-between",
-              borderBottom: "1px solid rgba(255,255,255,0.04)",
-              background: "rgba(255,255,255,0.01)",
-              flexShrink: 0,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-              <h1
+          {(() => {
+            const targetSec = dailyTarget * 3600;
+            const pct = targetSec > 0 ? Math.min(100, Math.round((displayTotal / targetSec) * 100)) : 0;
+            return (
+              <div
                 style={{
-                  margin: 0,
-                  fontSize: 22,
-                  fontWeight: 600,
-                  color: "#e2e4f3",
-                }}
-              >
-                {isSelectedToday ? "Today" : todayDate.toLocaleDateString("en-US", { weekday: "long" })}
-              </h1>
-              <span style={{ color: "#4b5090", fontSize: 14 }}>
-                {todayDate.getMonth() + 1}/{todayDate.getDate()}/{String(todayDate.getFullYear()).slice(2)}
-              </span>
-            </div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-              <span style={{ color: "#4b5090", fontSize: 13 }}>Total:</span>
-              <span
-                style={{
-                  color: "#e2e4f3",
-                  fontSize: 16,
-                  fontWeight: 600,
-                  fontFamily: "'DM Mono', monospace",
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {formatDuration(displayTotal)}
-              </span>
-              <span style={{ color: "#4b5090", fontSize: 13 }}>
-                {selectedDay.sessions.length} item{selectedDay.sessions.length !== 1 ? "s" : ""}
-              </span>
-              <button
-                onClick={() => setStatsOpen((s) => !s)}
-                title={statsOpen ? "Hide stats panel" : "Show stats panel"}
-                style={{
-                  background: "none",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 6,
-                  padding: "4px 6px",
-                  marginLeft: 8,
-                  cursor: "pointer",
-                  color: statsOpen ? "#818cf8" : "#4b5090",
+                  padding: "64px 32px 24px",
                   display: "flex",
-                  alignSelf: "center",
-                  transition: "color 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#818cf8";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = statsOpen ? "#818cf8" : "#4b5090";
+                  flexDirection: "column",
+                  gap: 18,
+                  position: "relative",
+                  borderBottom: "1px solid rgba(255,255,255,0.04)",
+                  flexShrink: 0,
                 }}
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.2" />
-                  <line x1="9" y1="1" x2="9" y2="13" stroke="currentColor" strokeWidth="1.2" />
-                </svg>
-              </button>
-            </div>
-          </div>
+                {/* Focus button — top of header, vertically centered with traffic lights */}
+                <div style={{ position: "absolute", top: 14, right: 20 }}>
+                  <button
+                    onClick={() => setStatsOpen((s) => !s)}
+                    title={statsOpen ? "Hide stats panel" : "Show stats panel"}
+                    style={{
+                      background: "rgba(129,140,248,0.08)",
+                      border: "1px solid rgba(129,140,248,0.18)",
+                      borderRadius: 10,
+                      padding: "7px 12px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 12,
+                      color: "#e2e4f3",
+                      transition: "all 0.15s",
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(129,140,248,0.14)"; e.currentTarget.style.borderColor = "rgba(129,140,248,0.32)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(129,140,248,0.08)"; e.currentTarget.style.borderColor = "rgba(129,140,248,0.18)"; }}
+                  >
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#6ee7b7", boxShadow: "0 0 6px #6ee7b7" }} />
+                    <span>
+                      Focus Score{" "}
+                      <span style={{ color: "#a5b4fc", fontFamily: "'DM Mono', monospace" }}>78%</span>
+                    </span>
+                    <span style={{ color: "#6ee7b7", fontFamily: "'DM Mono', monospace" }}>↑ 12</span>
+                    <span style={{ display: "flex", alignItems: "center", color: statsOpen ? "#a5b4fc" : "#4b5090", transition: "color 0.2s" }}>
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.2" />
+                        <line x1="9" y1="1" x2="9" y2="13" stroke="currentColor" strokeWidth="1.2" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+
+                {/* Title row */}
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 16 }}>
+                    {/* Play/Pause + status */}
+                    <div style={{ position: "relative", flexShrink: 0, width: 48, height: 48 }}>
+                    <button
+                      onClick={toggleTimer}
+                      title={isRunning ? "Pause" : "Start"}
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "50%",
+                        border: "1px solid rgba(129,140,248,0.3)",
+                        background: isRunning ? "rgba(129,140,248,0.18)" : "rgba(129,140,248,0.08)",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        transition: "all 0.15s",
+                        boxShadow: isRunning ? "0 0 18px rgba(129,140,248,0.25)" : "none",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(129,140,248,0.22)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = isRunning ? "rgba(129,140,248,0.18)" : "rgba(129,140,248,0.08)";
+                      }}
+                    >
+                      {isRunning ? (
+                        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                          <rect x="3" y="2" width="4" height="14" rx="1" fill="#818cf8" />
+                          <rect x="11" y="2" width="4" height="14" rx="1" fill="#818cf8" />
+                        </svg>
+                      ) : (
+                        <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                          <path d="M4 2.5L15 9L4 15.5V2.5Z" fill="#818cf8" />
+                        </svg>
+                      )}
+                    </button>
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        marginTop: 8,
+                        fontSize: 9,
+                        letterSpacing: "0.12em",
+                        textTransform: "uppercase",
+                        color: isRunning ? "#818cf8" : "#4b5090",
+                        fontFamily: "'DM Mono', monospace",
+                        whiteSpace: "nowrap",
+                        opacity: 0.85,
+                      }}
+                    >
+                      {isRunning ? "Recording" : "Paused"}
+                    </span>
+                    </div>
+                    <div>
+                      <h1
+                        style={{
+                          margin: 0,
+                          fontSize: 30,
+                          fontWeight: 700,
+                          color: "#e2e4f3",
+                          letterSpacing: "-0.02em",
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        {isSelectedToday ? "Today" : todayDate.toLocaleDateString("en-US", { weekday: "long" })}
+                      </h1>
+                      <div style={{ color: "#6366f1", fontSize: 13, marginTop: 4, fontFamily: "'Inter', sans-serif" }}>
+                        {todayDate.getMonth() + 1}/{todayDate.getDate()}/{String(todayDate.getFullYear()).slice(2)}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Timer */}
+                  <div
+                    style={{
+                      color: "#e2e4f3",
+                      fontSize: 30,
+                      fontWeight: 500,
+                      fontFamily: "'DM Mono', monospace",
+                      fontVariantNumeric: "tabular-nums",
+                      letterSpacing: "-0.01em",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    {formatDuration(displayTotal)}
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div
+                  style={{
+                    position: "relative",
+                    height: 4,
+                    background: "rgba(255,255,255,0.04)",
+                    borderRadius: 2,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: `${pct}%`,
+                      background: "linear-gradient(90deg, #6366f1, #818cf8)",
+                      borderRadius: 2,
+                      transition: "width 0.4s ease",
+                    }}
+                  />
+                </div>
+
+                {/* Caption row */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 12,
+                    marginTop: -2,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    {editingTarget ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <input
+                          type="number"
+                          min="0.5"
+                          max="24"
+                          step="0.5"
+                          value={targetInput}
+                          onChange={(e) => setTargetInput(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === "Enter") handleEditTarget(); }}
+                          autoFocus
+                          style={{
+                            width: 64,
+                            background: "rgba(255,255,255,0.05)",
+                            border: "1px solid rgba(129,140,248,0.3)",
+                            borderRadius: 6,
+                            padding: "4px 8px",
+                            color: "#e2e4f3",
+                            fontSize: 12,
+                            fontFamily: "'DM Mono', monospace",
+                            outline: "none",
+                          }}
+                        />
+                        <button
+                          onClick={handleEditTarget}
+                          style={{
+                            background: "#818cf8",
+                            border: "none",
+                            borderRadius: 6,
+                            padding: "5px 12px",
+                            color: "#0a0b12",
+                            fontSize: 11,
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            fontFamily: "'Inter', sans-serif",
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditingTarget(false)}
+                          style={{
+                            background: "none",
+                            border: "1px solid rgba(255,255,255,0.08)",
+                            borderRadius: 6,
+                            padding: "5px 10px",
+                            color: "#6b6f98",
+                            fontSize: 11,
+                            cursor: "pointer",
+                            fontFamily: "'Inter', sans-serif",
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <span style={{ color: "#6b6f98", display: "flex", alignItems: "center", gap: 6, fontFamily: "'Inter', sans-serif", fontSize: 12 }}>
+                        <span style={{ color: "#a5b4fc", fontFamily: "'DM Mono', monospace" }}>{pct}%</span>
+                        of Daily Focus Target
+                        <button
+                          onClick={handleEditTarget}
+                          title="Edit daily focus target"
+                          style={{
+                            background: "rgba(255,255,255,0.04)",
+                            border: "1px solid rgba(255,255,255,0.06)",
+                            borderRadius: 8,
+                            padding: "3px 8px",
+                            color: "#a5b4fc",
+                            fontSize: 12,
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            fontFamily: "'DM Mono', monospace",
+                            transition: "all 0.15s",
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(129,140,248,0.3)"; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
+                        >
+                          {dailyTarget}h
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                            <path d="M7.5 1.25L8.75 2.5L3.125 8.125L1.25 8.75L1.875 6.875L7.5 1.25Z" stroke="currentColor" strokeWidth="0.8" strokeLinejoin="round" />
+                          </svg>
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                  <span />
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Session list */}
           <div
@@ -827,86 +1026,6 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
             )}
           </div>
 
-          {/* Timer card (pinned at bottom) */}
-          <div style={{ padding: "0 24px 24px", flexShrink: 0 }}>
-            {editingTarget ? (
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(129,140,248,0.2)",
-                  borderRadius: 22,
-                  padding: "22px 28px",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 16,
-                }}
-              >
-                <span style={{ color: "#6b6f98", fontSize: 14 }}>Set daily target (hours):</span>
-                <input
-                  type="number"
-                  min="0.5"
-                  max="24"
-                  step="0.5"
-                  value={targetInput}
-                  onChange={(e) => setTargetInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleEditTarget();
-                  }}
-                  autoFocus
-                  style={{
-                    width: 80,
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(129,140,248,0.3)",
-                    borderRadius: 8,
-                    padding: "8px 12px",
-                    color: "#e2e4f3",
-                    fontSize: 16,
-                    fontFamily: "'DM Mono', monospace",
-                    outline: "none",
-                  }}
-                />
-                <button
-                  onClick={handleEditTarget}
-                  style={{
-                    background: "#818cf8",
-                    border: "none",
-                    borderRadius: 8,
-                    padding: "8px 20px",
-                    color: "#0a0b12",
-                    fontSize: 13,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setEditingTarget(false)}
-                  style={{
-                    background: "none",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    borderRadius: 8,
-                    padding: "8px 16px",
-                    color: "#6b6f98",
-                    fontSize: 13,
-                    cursor: "pointer",
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <TimerCard
-                elapsed={displayTotal}
-                isRunning={isRunning}
-                onToggle={toggleTimer}
-                dailyTarget={dailyTarget}
-                onEditTarget={handleEditTarget}
-              />
-            )}
-          </div>
         </div>
       </div>
 
@@ -931,6 +1050,7 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
               <Dashboard
                 userName="Andrew"
                 onLogout={onLogout}
+                hideHeader
               />
             )}
           </div>
@@ -939,6 +1059,10 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
 
       {/* Responsive styles */}
       <style>{`
+        @keyframes statPing {
+          0% { transform: scale(1); opacity: 0.5; }
+          80%, 100% { transform: scale(2.4); opacity: 0; }
+        }
         @media (max-width: 768px) {
           /* Stack sidebar above content on mobile */
         }
