@@ -1,0 +1,1449 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AdhdHD Usage Behavior Charts</title>
+  <style>
+    :root {
+      --bg-page: #080910;
+      --bg-deep: #0a0b12;
+      --bg-card: #0d0e18;
+      --bg-inset: #0e0f1f;
+      --bg-bar: #1a1c35;
+      --border: #1e2035;
+      --accent: #6366f1;
+      --accent-bright: #818cf8;
+      --cyan: #22d3ee;
+      --green: #6ee7b7;
+      --red: #f87171;
+      --text: #e2e4f3;
+      --text-mid: #9da0c8;
+      --text-body: #8b8fb8;
+      --text-muted: #6b6f98;
+      --text-dim: #3a3d5c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 75% 5%, rgba(99, 102, 241, 0.12), transparent 32rem),
+        radial-gradient(circle at 15% 35%, rgba(34, 211, 238, 0.06), transparent 28rem),
+        var(--bg-page);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    header {
+      margin-bottom: 36px;
+    }
+
+    .eyebrow {
+      color: var(--accent-bright);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      margin: 0 0 18px;
+      max-width: 820px;
+    }
+
+    .lede {
+      color: var(--text-body);
+      font-size: 18px;
+      line-height: 1.7;
+      max-width: 780px;
+      margin: 0;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 28px;
+      max-width: 1040px;
+    }
+
+    .dashboard-range {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+      padding: 4px 4px 18px;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.16);
+      background: transparent;
+    }
+
+    .dashboard-range-top {
+      display: grid;
+      gap: 14px;
+      align-items: start;
+      justify-items: start;
+    }
+
+    .dashboard-range-title {
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .dashboard-range-note {
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.45;
+      max-width: 460px;
+      min-height: 32px;
+    }
+
+    .dashboard-range-copy {
+      display: grid;
+      gap: 4px;
+      min-width: min(100%, 420px);
+    }
+
+    .range-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .range-select {
+      appearance: none;
+      border: 1px solid rgba(129, 140, 248, 0.24);
+      border-radius: 999px;
+      background:
+        linear-gradient(45deg, transparent 50%, var(--accent-bright) 50%) calc(100% - 14px) 50% / 6px 6px no-repeat,
+        linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(10, 11, 18, 0.86));
+      color: var(--text);
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 30px 8px 11px;
+      min-width: 130px;
+    }
+
+    .range-select option {
+      background: var(--bg-card);
+      color: var(--text);
+    }
+
+    .dashboard-shell {
+      max-width: 1040px;
+      margin-top: 22px;
+      padding: 18px;
+      border: 1px solid rgba(129, 140, 248, 0.18);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(99, 102, 241, 0.045), rgba(10, 11, 18, 0.12)),
+        rgba(8, 9, 16, 0.18);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+    }
+
+    .today-section {
+      max-width: 1040px;
+      margin-top: 28px;
+    }
+
+    .today-card {
+      min-height: 0;
+    }
+
+    .today-card .timeline {
+      margin-top: 18px;
+    }
+
+    .today-dimensions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .today-dimension {
+      display: grid;
+      gap: 6px;
+      padding: 14px;
+      border: 1px solid rgba(129, 140, 248, 0.16);
+      border-radius: 14px;
+      background: rgba(99, 102, 241, 0.055);
+    }
+
+    .today-dimension-score {
+      color: var(--text);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .today-dimension-label {
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .today-dimension-note {
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+
+    .score-card {
+      background: rgba(13, 14, 24, 0.82);
+      border: 1px solid rgba(99, 102, 241, 0.22);
+      border-radius: 16px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: center;
+      min-height: 132px;
+    }
+
+    .score-number {
+      width: 66px;
+      height: 66px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.96), rgba(129, 140, 248, 0.72));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 25px;
+      font-weight: 600;
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.22);
+    }
+
+    .score-label {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .score-note {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.45;
+      min-height: calc(1.45em * 3);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(13, 14, 24, 0.96), rgba(10, 11, 18, 0.96));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card.wide { grid-column: 1 / -1; }
+
+    .card-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .range-row {
+      display: flex;
+      justify-content: flex-start;
+      margin: 8px 0 14px;
+    }
+
+    .range-toggle {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(129, 140, 248, 0.22);
+      background: rgba(10, 11, 18, 0.72);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .range-option {
+      border-radius: 999px;
+      padding: 5px 9px;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 0;
+      background: transparent;
+      font-family: inherit;
+    }
+
+    .range-option.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.92), rgba(129, 140, 248, 0.82));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .chart-score {
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 999px;
+      color: #ffffff;
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      white-space: nowrap;
+      padding: 6px 10px;
+    }
+
+    .card p {
+      margin: 0 0 18px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .timeline {
+      background: var(--bg-inset);
+      border: 1px solid rgba(99, 102, 241, 0.16);
+      border-radius: 12px;
+      padding: 18px 14px 12px;
+    }
+
+    .track {
+      position: relative;
+      height: 48px;
+      border-radius: 8px;
+      background:
+        repeating-linear-gradient(90deg, rgba(8, 9, 16, 0.34) 0, rgba(8, 9, 16, 0.34) 1px, transparent 1px, transparent 12.5%),
+        rgba(58, 61, 92, 0.8);
+      overflow: hidden;
+    }
+
+    .track::after {
+      content: "gaps";
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      color: rgba(157, 160, 200, 0.28);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .block {
+      position: absolute;
+      top: 10px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+      box-shadow: 0 0 18px rgba(129, 140, 248, 0.24);
+    }
+
+    .hours {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      margin-top: 10px;
+    }
+
+    .hours-chart {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      grid-template-rows: 188px auto;
+      column-gap: 12px;
+      row-gap: 8px;
+    }
+
+    .y-axis {
+      grid-column: 1;
+      grid-row: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: end;
+      color: var(--text-mid);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      font-weight: 500;
+      padding-bottom: 2px;
+    }
+
+    .plot {
+      grid-column: 2;
+      grid-row: 1;
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      align-items: end;
+      gap: 7px;
+      border-left: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 0 0 0 8px;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px) 0 0 / 100% 25%;
+    }
+
+    .plot[data-range="30"] {
+      grid-template-columns: repeat(30, minmax(0, 1fr));
+      gap: 3px;
+    }
+
+    .day-column {
+      display: grid;
+      height: 100%;
+      align-items: end;
+      position: relative;
+    }
+
+    .day-column::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 10px);
+      transform: translateX(-50%) translateY(4px);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(8, 9, 16, 0.96);
+      border: 1px solid rgba(129, 140, 248, 0.34);
+      border-radius: 10px;
+      color: var(--text);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.34);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      line-height: 1.45;
+      padding: 8px 10px;
+      white-space: pre;
+      z-index: 5;
+      transition: opacity 0.14s ease, transform 0.14s ease;
+    }
+
+    .day-column:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .day-column:hover .bar {
+      filter: brightness(1.18);
+      border-color: rgba(226, 228, 243, 0.28);
+    }
+
+    .bar {
+      width: 100%;
+      min-height: 5px;
+      border-radius: 5px 5px 2px 2px;
+      background: linear-gradient(180deg, rgba(129, 140, 248, 0.96), rgba(99, 102, 241, 0.42));
+      border: 1px solid rgba(129, 140, 248, 0.16);
+    }
+
+    .bar.zero {
+      height: 5px !important;
+      background: var(--bg-bar);
+      border-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .x-axis {
+      grid-column: 2;
+      grid-row: 2;
+      padding-left: 8px;
+      padding-bottom: 22px;
+      --day-count: 7;
+      --axis-gap: 7px;
+    }
+
+    .x-axis[data-range="30"] {
+      --day-count: 30;
+      --axis-gap: 3px;
+    }
+
+    .x-axis[data-range="30"] .axis-cell,
+    .x-axis[data-range="30"] .month-divider {
+      font-size: 9px;
+    }
+
+    .axis-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--day-count), minmax(0, 1fr));
+      column-gap: var(--axis-gap);
+    }
+
+    .axis-cell {
+      color: var(--text-dim);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .weekday-row {
+      margin-top: 8px;
+    }
+
+    .date-row {
+      margin-top: 5px;
+    }
+
+    .month-row {
+      margin-top: 9px;
+      min-width: 0;
+      overflow: visible;
+    }
+
+    .weekday-cell {
+      color: var(--text-mid);
+      font-weight: 500;
+    }
+
+    .month-divider {
+      color: var(--text-muted);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+      line-height: 1.2;
+      white-space: nowrap;
+      min-width: 0;
+      overflow: visible;
+      text-align: left;
+    }
+
+    .day-label {
+      color: var(--text-dim);
+      font-size: 10px;
+      text-align: center;
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      line-height: 1.35;
+    }
+
+    .day-label strong {
+      display: block;
+      color: var(--text-mid);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .day-label span {
+      display: block;
+      color: var(--text-dim);
+    }
+
+    .rhythm-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .rhythm-card {
+      display: grid;
+      gap: 14px;
+      min-height: 238px;
+      padding: 16px;
+      border: 1px solid rgba(129, 140, 248, 0.16);
+      border-radius: 16px;
+      background: rgba(8, 9, 16, 0.28);
+    }
+
+    .rhythm-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .rhythm-caption {
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.45;
+      min-height: 32px;
+    }
+
+    .time-axis {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 9px;
+    }
+
+    .daypart-track {
+      display: grid;
+      grid-template-columns: 1.2fr 1.4fr 1fr;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      min-height: 96px;
+      background: var(--bg-inset);
+    }
+
+    .daypart {
+      display: grid;
+      align-content: end;
+      gap: 7px;
+      padding: 12px;
+      border-right: 1px solid rgba(255, 255, 255, 0.045);
+      color: var(--text-mid);
+      font-size: 11px;
+    }
+
+    .daypart:last-child {
+      border-right: 0;
+    }
+
+    .daypart strong {
+      color: var(--text);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 16px;
+    }
+
+    .daypart.peak {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.42), rgba(99, 102, 241, 0.1));
+    }
+
+    .daypart.mid {
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.22), rgba(99, 102, 241, 0.06));
+    }
+
+    .daypart.low {
+      background: rgba(99, 102, 241, 0.055);
+    }
+
+    .hour-profile {
+      display: grid;
+      grid-template-columns: repeat(13, minmax(0, 1fr));
+      gap: 4px;
+      align-items: end;
+      height: 112px;
+      padding: 10px 0 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .hour-bar {
+      min-height: 4px;
+      border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, rgba(129, 140, 248, 0.95), rgba(99, 102, 241, 0.34));
+    }
+
+    .hour-bar.dim {
+      background: rgba(99, 102, 241, 0.18);
+    }
+
+    .rhythm-strip-chart {
+      display: grid;
+      gap: 8px;
+    }
+
+    .rhythm-strip-row {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: center;
+      color: var(--text-mid);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+    }
+
+    .rhythm-strip {
+      height: 12px;
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg,
+          var(--bg-bar) 0%,
+          var(--bg-bar) 100%);
+      overflow: hidden;
+    }
+
+    .rhythm-strip.mon {
+      background:
+        linear-gradient(90deg,
+          rgba(99, 102, 241, 0.16) 0% 8%,
+          rgba(99, 102, 241, 0.54) 8% 18%,
+          rgba(129, 140, 248, 0.92) 18% 30%,
+          rgba(99, 102, 241, 0.48) 30% 39%,
+          rgba(99, 102, 241, 0.18) 39% 48%,
+          rgba(99, 102, 241, 0.34) 48% 61%,
+          rgba(99, 102, 241, 0.22) 61% 70%,
+          var(--bg-bar) 70% 100%);
+    }
+
+    .rhythm-strip.tue {
+      background:
+        linear-gradient(90deg,
+          rgba(99, 102, 241, 0.12) 0% 9%,
+          rgba(99, 102, 241, 0.42) 9% 20%,
+          rgba(99, 102, 241, 0.66) 20% 31%,
+          rgba(129, 140, 248, 0.9) 31% 42%,
+          rgba(99, 102, 241, 0.28) 42% 53%,
+          rgba(99, 102, 241, 0.46) 53% 65%,
+          rgba(99, 102, 241, 0.16) 65% 76%,
+          var(--bg-bar) 76% 100%);
+    }
+
+    .rhythm-strip.wed {
+      background:
+        linear-gradient(90deg,
+          rgba(99, 102, 241, 0.42) 0% 10%,
+          rgba(129, 140, 248, 0.86) 10% 26%,
+          rgba(129, 140, 248, 0.94) 26% 38%,
+          rgba(99, 102, 241, 0.54) 38% 48%,
+          rgba(99, 102, 241, 0.2) 48% 58%,
+          rgba(99, 102, 241, 0.34) 58% 70%,
+          rgba(99, 102, 241, 0.16) 70% 78%,
+          var(--bg-bar) 78% 100%);
+    }
+
+    .rhythm-strip.thu {
+      background:
+        linear-gradient(90deg,
+          rgba(99, 102, 241, 0.2) 0% 10%,
+          rgba(99, 102, 241, 0.6) 10% 24%,
+          rgba(99, 102, 241, 0.68) 24% 36%,
+          rgba(99, 102, 241, 0.32) 36% 47%,
+          rgba(99, 102, 241, 0.18) 47% 56%,
+          rgba(99, 102, 241, 0.46) 56% 68%,
+          rgba(99, 102, 241, 0.2) 68% 78%,
+          var(--bg-bar) 78% 100%);
+    }
+
+    .rhythm-strip.fri {
+      background:
+        linear-gradient(90deg,
+          rgba(99, 102, 241, 0.48) 0% 10%,
+          rgba(129, 140, 248, 0.88) 10% 28%,
+          rgba(129, 140, 248, 0.82) 28% 38%,
+          rgba(99, 102, 241, 0.42) 38% 50%,
+          rgba(99, 102, 241, 0.34) 50% 62%,
+          rgba(99, 102, 241, 0.16) 62% 70%,
+          var(--bg-bar) 70% 100%);
+    }
+
+    .gap-chart {
+      display: grid;
+      gap: 11px;
+      margin-top: 4px;
+    }
+
+    .gap-chart.dense {
+      gap: 9px;
+    }
+
+    .gap-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 148px;
+      gap: 12px;
+      align-items: center;
+      color: var(--text-mid);
+      font-family: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+    }
+
+    .gap-day {
+      color: var(--text-mid);
+    }
+
+    .gap-rail {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) 46px;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .gap-time {
+      color: var(--text-dim);
+      font-size: 9px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .gap-track {
+      display: flex;
+      height: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--bg-bar);
+    }
+
+    .gap-metrics {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+      justify-items: end;
+    }
+
+    .gap-primary {
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .gap-ratio {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .gap-ratio-focus {
+      color: var(--accent-bright);
+    }
+
+    .gap-ratio-divider {
+      color: var(--text-dim);
+    }
+
+    .gap-ratio-total {
+      color: rgba(90, 93, 122, 0.98);
+    }
+
+    .gap-secondary {
+      color: var(--text-dim);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .gap-main {
+      display: grid;
+      gap: 2px;
+      justify-items: end;
+      min-width: 0;
+      text-align: right;
+    }
+
+    .gap-metrics.ratio {
+      width: 100%;
+    }
+
+    .gap-percent-col {
+      display: grid;
+      gap: 4px;
+      align-items: center;
+      justify-items: end;
+    }
+
+    .gap-meter {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(58, 61, 92, 0.7);
+      overflow: hidden;
+      width: 44px;
+    }
+
+    .gap-meter-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    }
+
+    .gap-percent {
+      color: var(--text-mid);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .gap-metrics.hours-first {
+      width: 100%;
+    }
+
+    .gap-hours-big {
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .gap-percent-badge {
+      color: var(--accent-bright);
+      border-color: rgba(129, 140, 248, 0.24);
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.24);
+      border-radius: 999px;
+      font-size: 10px;
+      line-height: 1;
+      padding: 5px 8px;
+      white-space: nowrap;
+    }
+
+    .gap-focus {
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    }
+
+    .gap-focus.tiny {
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    }
+
+    .gap-focus.short {
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    }
+
+    .gap-focus.long {
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    }
+
+    .gap-focus.deep {
+      background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .gap-space {
+      background: rgba(58, 61, 92, 0.8);
+      border-left: 0;
+      border-right: 0;
+    }
+
+    .gap-space.heavy {
+      background: rgba(58, 61, 92, 0.8);
+    }
+
+    .gap-space.light {
+      background: rgba(58, 61, 92, 0.8);
+    }
+
+    @media (max-width: 820px) {
+      .scoreboard { grid-template-columns: 1fr; }
+      .today-dimensions { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .rhythm-options { grid-template-columns: 1fr; }
+      .card.wide { grid-column: auto; }
+      main { width: min(100% - 24px, 1120px); padding-top: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">AdhdHD usage behavior charts</div>
+      <h1>A high-definition view of your focus time.</h1>
+      <p class="lede">AdhdHD turns tracked focus time into a clear picture of what happened today, how your recent rhythm is forming, and where your focused work actually lives.</p>
+    </header>
+
+    <section class="today-section" aria-label="Today focus detail">
+      <article class="card wide today-card">
+        <div class="card-head">
+          <h2>Today: Session Timeline</h2>
+          <div class="chart-score">Today score 84</div>
+        </div>
+        <p>A zoomed-in view of the current day. Focus blocks are shown across the clock, and gaps stay visible as gaps instead of being interpreted as breaks or drift.</p>
+        <div class="today-dimensions" aria-label="Today productivity score dimensions">
+          <div class="today-dimension">
+            <div class="today-dimension-score">88</div>
+            <div class="today-dimension-label">Total focused time</div>
+            <div class="today-dimension-note">65% of score. Today is strong on focused output volume.</div>
+          </div>
+          <div class="today-dimension">
+            <div class="today-dimension-score">82</div>
+            <div class="today-dimension-label">Sustained flow blocks</div>
+            <div class="today-dimension-note">25% of score. Longer blocks receive more credit than restarts.</div>
+          </div>
+          <div class="today-dimension">
+            <div class="today-dimension-score">64</div>
+            <div class="today-dimension-label">Time efficiency</div>
+            <div class="today-dimension-note">10% of score. Focus compared with the elapsed work window.</div>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="track">
+            <div class="block" style="left: 7%; width: 14%"></div>
+            <div class="block" style="left: 27%; width: 9%"></div>
+            <div class="block" style="left: 45%; width: 22%"></div>
+            <div class="block" style="left: 76%; width: 12%"></div>
+          </div>
+          <div class="hours"><span>8a</span><span>10a</span><span>12p</span><span>2p</span><span>4p</span><span>6p</span></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="scoreboard" aria-label="Recent comparison scores">
+      <div class="score-card">
+        <div class="score-number">71</div>
+        <div>
+          <div class="score-label">Yesterday</div>
+          <div class="score-note">Previous day score for quick context against today.</div>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-number">78</div>
+        <div>
+          <div class="score-label">Last 8 days</div>
+          <div class="score-note">Recent rolling score including today and the prior week.</div>
+        </div>
+      </div>
+      <div class="score-card">
+        <div class="score-number">74</div>
+        <div>
+          <div class="score-label">Last 30 days</div>
+          <div class="score-note">Longer recent score showing the broader focus baseline.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-shell" aria-label="Focus dashboard">
+      <div class="dashboard-range" aria-label="Focus view control">
+          <div class="dashboard-range-top">
+            <div class="dashboard-range-copy">
+              <div class="dashboard-range-title">Your focus view</div>
+              <div class="dashboard-range-note" id="range-mode-note">Recent shows your latest focus pattern. Choose the last 7 or 30 days.</div>
+            </div>
+            <div class="range-controls">
+              <div class="range-toggle" aria-label="Dashboard mode">
+                <button class="range-option active" type="button" data-range-mode="recent">Recent</button>
+                <button class="range-option" type="button" data-range-mode="month">By month</button>
+              </div>
+              <select class="range-select" id="range-detail-select" aria-label="Choose range detail"></select>
+            </div>
+          </div>
+      </div>
+
+      <section class="grid">
+      <article class="card wide">
+        <div class="card-head">
+          <h2>1. Focused Hours Per Day</h2>
+          <div class="chart-score" id="hours-range-score">30-day score 74</div>
+        </div>
+        <p id="hours-range-copy">Focused hours tracked across the last 30 days. Month dividers appear only when the month changes.</p>
+        <div class="hours-chart" aria-label="Focused hours per day">
+          <div class="y-axis"><span>6h</span><span>4h</span><span>2h</span><span>0h</span></div>
+          <div class="plot" id="focused-hours-plot" data-range="30">
+            <div class="day-column"><div class="bar" style="height: 60%"></div></div>
+            <div class="day-column"><div class="bar" style="height: 68%"></div></div>
+            <div class="day-column"><div class="bar" style="height: 42%"></div></div>
+            <div class="day-column"><div class="bar" style="height: 82%"></div></div>
+            <div class="day-column"><div class="bar" style="height: 72%"></div></div>
+            <div class="day-column"><div class="bar zero"></div></div>
+            <div class="day-column"><div class="bar" style="height: 32%"></div></div>
+          </div>
+          <div class="x-axis" id="focused-hours-axis" data-range="30">
+            <div class="day-label"><strong>M</strong><span><span class="month-prefix">4/</span>13</span></div>
+            <div class="day-label"><strong>T</strong><span>14</span></div>
+            <div class="day-label"><strong>W</strong><span>15</span></div>
+            <div class="day-label"><strong>T</strong><span>16</span></div>
+            <div class="day-label"><strong>F</strong><span>17</span></div>
+            <div class="day-label"><strong>S</strong><span>18</span></div>
+            <div class="day-label"><strong>S</strong><span>19</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card wide">
+        <div class="card-head">
+          <h2>2. Focus / Total Duration</h2>
+          <div class="chart-score" id="focus-total-score">April span score 58</div>
+        </div>
+        <p>Hours-first view: the same timeline shape is preserved, but the metric stack emphasizes completed hours first, then total span and focus percentage.</p>
+        <div class="gap-chart dense" data-gap-chart="mixed-blocks" data-gap-layout="hours-first"></div>
+      </article>
+
+      <article class="card wide">
+        <div class="card-head">
+          <h2>3. Time-of-Day Rhythm Options</h2>
+          <div class="chart-score" id="rhythm-score">April rhythm score 81</div>
+        </div>
+        <p>Three alternatives for showing when focus tends to happen across the day. Each option spans 8am to 8pm so the full workday shape is visible.</p>
+        <div class="rhythm-options">
+          <div class="rhythm-card">
+            <div>
+              <div class="rhythm-title"><span>Daypart Map</span><span>Best for story</span></div>
+              <div class="rhythm-caption">Groups the day into morning, afternoon, and evening so the strongest focus window is obvious.</div>
+            </div>
+            <div class="daypart-track" aria-label="Focus by daypart from 8am to 8pm">
+              <div class="daypart peak"><strong>58%</strong><span>Morning<br>8am-12pm</span></div>
+              <div class="daypart mid"><strong>34%</strong><span>Afternoon<br>12pm-5pm</span></div>
+              <div class="daypart low"><strong>8%</strong><span>Evening<br>5pm-8pm</span></div>
+            </div>
+            <div class="time-axis"><span>8am</span><span>12pm</span><span>5pm</span><span>8pm</span></div>
+          </div>
+
+          <div class="rhythm-card">
+            <div>
+              <div class="rhythm-title"><span>Hourly Profile</span><span>Best for precision</span></div>
+              <div class="rhythm-caption">Shows focused minutes by hour. The peak around 10am is readable without a dense heatmap.</div>
+            </div>
+            <div class="hour-profile" aria-label="Focused minutes by hour from 8am to 8pm">
+              <div class="hour-bar" style="height: 42%"></div>
+              <div class="hour-bar" style="height: 70%"></div>
+              <div class="hour-bar" style="height: 92%"></div>
+              <div class="hour-bar" style="height: 64%"></div>
+              <div class="hour-bar dim" style="height: 24%"></div>
+              <div class="hour-bar" style="height: 38%"></div>
+              <div class="hour-bar" style="height: 54%"></div>
+              <div class="hour-bar dim" style="height: 22%"></div>
+              <div class="hour-bar dim" style="height: 12%"></div>
+              <div class="hour-bar dim" style="height: 8%"></div>
+              <div class="hour-bar dim" style="height: 4%"></div>
+              <div class="hour-bar dim" style="height: 2%"></div>
+              <div class="hour-bar dim" style="height: 6%"></div>
+            </div>
+            <div class="time-axis"><span>8a</span><span>10a</span><span>12p</span><span>2p</span><span>4p</span><span>6p</span><span>8p</span></div>
+          </div>
+
+          <div class="rhythm-card">
+            <div>
+              <div class="rhythm-title"><span>Weekday Flow</span><span>Best for pattern</span></div>
+              <div class="rhythm-caption">Continuous 8am-8pm lines. Brighter stretches mean more focused work; fully dark stretches mean no tracked focus.</div>
+            </div>
+            <div class="rhythm-strip-chart" aria-label="Weekday focus rhythm from 8am to 8pm">
+              <div class="rhythm-strip-row"><span>Mon</span><div class="rhythm-strip mon"></div></div>
+              <div class="rhythm-strip-row"><span>Tue</span><div class="rhythm-strip tue"></div></div>
+              <div class="rhythm-strip-row"><span>Wed</span><div class="rhythm-strip wed"></div></div>
+              <div class="rhythm-strip-row"><span>Thu</span><div class="rhythm-strip thu"></div></div>
+              <div class="rhythm-strip-row"><span>Fri</span><div class="rhythm-strip fri"></div></div>
+            </div>
+            <div class="time-axis"><span>8a</span><span>10a</span><span>12p</span><span>2p</span><span>4p</span><span>6p</span><span>8p</span></div>
+          </div>
+        </div>
+      </article>
+
+      </section>
+    </section>
+  </main>
+  <script>
+    const focusedHourRanges = {
+      7: {
+        score: "7-day score 78",
+        copy: "Focused hours tracked each day. The left axis is hours, and each bar is labeled by weekday and date.",
+        focusTotalScore: "7-day span score 58",
+        rhythmScore: "7-day rhythm score 81",
+        days: [
+          ["W", "April", "4", "15", 2.5, 61],
+          ["T", "", "4", "16", 4.9, 88],
+          ["F", "", "4", "17", 4.3, 81],
+          ["S", "", "4", "18", 0, 12],
+          ["S", "", "4", "19", 1.9, 43],
+          ["M", "", "4", "20", 3.6, 74],
+          ["T", "", "4", "21", 4.1, 78],
+        ],
+      },
+      30: {
+        score: "30-day score 74",
+        copy: "Focused hours tracked across the last 30 trailing days. This is recent mode, not a calendar month.",
+        focusTotalScore: "30-day span score 56",
+        rhythmScore: "30-day rhythm score 78",
+        days: [
+          ["M", "March", "3", "23", 0, 10], ["T", "", "3", "24", 3.2, 68], ["W", "", "3", "25", 4.8, 86], ["T", "", "3", "26", 2.1, 52],
+          ["F", "", "3", "27", 3.9, 76], ["S", "", "3", "28", 5.1, 91], ["S", "", "3", "29", 0.8, 28], ["M", "", "3", "30", 0, 9],
+          ["T", "", "3", "31", 3.5, 72], ["W", "April", "4", "1", 1.4, 39], ["T", "", "4", "2", 4.3, 81], ["F", "", "4", "3", 0.2, 18],
+          ["S", "", "4", "4", 5.6, 94], ["S", "", "4", "5", 1.1, 32], ["M", "", "4", "6", 0, 11], ["T", "", "4", "7", 3.0, 65],
+          ["W", "", "4", "8", 4.1, 79], ["T", "", "4", "9", 2.5, 57], ["F", "", "4", "10", 4.9, 88], ["S", "", "4", "11", 4.3, 82],
+          ["S", "", "4", "12", 0, 12], ["M", "", "4", "13", 1.9, 43], ["T", "", "4", "14", 3.6, 74], ["W", "", "4", "15", 4.1, 78],
+          ["T", "", "4", "16", 2.5, 61], ["F", "", "4", "17", 4.9, 88], ["S", "", "4", "18", 4.3, 81], ["S", "", "4", "19", 0.6, 24],
+          ["M", "", "4", "20", 3.6, 74], ["T", "", "4", "21", 4.1, 78],
+        ],
+      },
+      "2026-04": {
+        score: "April score 74",
+        copy: "Focused hours tracked across April 2026 so far. Monthly mode shows the calendar month, not a trailing 30-day window.",
+        focusTotalScore: "April span score 58",
+        rhythmScore: "April rhythm score 81",
+        days: [
+          ["W", "April", "4", "1", 1.4, 39], ["T", "", "4", "2", 4.3, 81], ["F", "", "4", "3", 0.2, 18],
+          ["S", "", "4", "4", 5.6, 94], ["S", "", "4", "5", 1.1, 32], ["M", "", "4", "6", 0, 11], ["T", "", "4", "7", 3.0, 65],
+          ["W", "", "4", "8", 4.1, 79], ["T", "", "4", "9", 2.5, 57], ["F", "", "4", "10", 4.9, 88], ["S", "", "4", "11", 4.3, 82],
+          ["S", "", "4", "12", 0, 12], ["M", "", "4", "13", 1.9, 43], ["T", "", "4", "14", 3.6, 74], ["W", "", "4", "15", 4.1, 78],
+          ["T", "", "4", "16", 2.5, 61], ["F", "", "4", "17", 4.9, 88], ["S", "", "4", "18", 4.3, 81], ["S", "", "4", "19", 0.6, 24],
+          ["M", "", "4", "20", 3.6, 74], ["T", "", "4", "21", 4.1, 78],
+        ],
+      },
+      "2026-03": {
+        score: "March score 69",
+        copy: "Focused hours tracked across March 2026. Selecting a previous month puts the dashboard in monthly mode.",
+        focusTotalScore: "March span score 54",
+        rhythmScore: "March rhythm score 73",
+        days: [
+          ["S", "March", "3", "1", 0.4, 22], ["M", "", "3", "2", 2.8, 61], ["T", "", "3", "3", 4.6, 82], ["W", "", "3", "4", 3.1, 68],
+          ["T", "", "3", "5", 4.9, 86], ["F", "", "3", "6", 0.7, 27], ["S", "", "3", "7", 0, 8], ["S", "", "3", "8", 1.6, 41],
+          ["M", "", "3", "9", 3.9, 76], ["T", "", "3", "10", 2.2, 55], ["W", "", "3", "11", 4.8, 87], ["T", "", "3", "12", 3.4, 70],
+          ["F", "", "3", "13", 0, 9], ["S", "", "3", "14", 2.4, 57], ["S", "", "3", "15", 3.7, 73], ["M", "", "3", "16", 4.2, 80],
+          ["T", "", "3", "17", 1.3, 36], ["W", "", "3", "18", 0, 10], ["T", "", "3", "19", 4.5, 84], ["F", "", "3", "20", 3.0, 64],
+          ["S", "", "3", "21", 0.6, 25], ["S", "", "3", "22", 0, 8], ["M", "", "3", "23", 0, 10], ["T", "", "3", "24", 3.2, 68],
+          ["W", "", "3", "25", 4.8, 86], ["T", "", "3", "26", 2.1, 52], ["F", "", "3", "27", 3.9, 76], ["S", "", "3", "28", 5.1, 91],
+          ["S", "", "3", "29", 0.8, 28], ["M", "", "3", "30", 0, 9], ["T", "", "3", "31", 3.5, 72],
+        ],
+      },
+      "2026-02": {
+        score: "February score 63",
+        copy: "Focused hours tracked across February 2026. Previous months are calendar-month snapshots.",
+        focusTotalScore: "February span score 49",
+        rhythmScore: "February rhythm score 68",
+        days: [
+          ["S", "February", "2", "1", 0, 8], ["M", "", "2", "2", 1.9, 44], ["T", "", "2", "3", 2.7, 59], ["W", "", "2", "4", 0.5, 22],
+          ["T", "", "2", "5", 3.8, 74], ["F", "", "2", "6", 4.2, 79], ["S", "", "2", "7", 0, 7], ["S", "", "2", "8", 1.1, 32],
+          ["M", "", "2", "9", 2.9, 62], ["T", "", "2", "10", 0, 9], ["W", "", "2", "11", 4.4, 83], ["T", "", "2", "12", 3.1, 67],
+          ["F", "", "2", "13", 2.0, 49], ["S", "", "2", "14", 0.6, 24], ["S", "", "2", "15", 0, 8], ["M", "", "2", "16", 3.6, 72],
+          ["T", "", "2", "17", 1.8, 43], ["W", "", "2", "18", 4.1, 78], ["T", "", "2", "19", 0.9, 29], ["F", "", "2", "20", 3.3, 69],
+          ["S", "", "2", "21", 0, 7], ["S", "", "2", "22", 0.4, 18], ["M", "", "2", "23", 2.6, 58], ["T", "", "2", "24", 4.0, 77],
+          ["W", "", "2", "25", 3.2, 66], ["T", "", "2", "26", 1.2, 35], ["F", "", "2", "27", 4.5, 84], ["S", "", "2", "28", 0.8, 26],
+        ],
+      },
+    };
+
+    const focusSegment = (width, tone = "long") => ({ type: "focus", width, tone });
+    const gapSegment = (width, tone = "") => ({ type: "gap", width, tone });
+    const shortRun = (count, focusWidth = 2, gapWidth = 3) =>
+      Array.from({ length: count }, (_, index) => [
+        focusSegment(focusWidth, index % 3 === 0 ? "short" : "tiny"),
+        gapSegment(gapWidth, "heavy"),
+      ]).flat();
+
+    const gapChartVariants = {
+      balanced: [
+        { day: "Mon", metric: "4 gaps", segments: [focusSegment(18), gapSegment(5), focusSegment(8, "short"), gapSegment(4), focusSegment(24, "deep"), gapSegment(7), focusSegment(12), gapSegment(4), focusSegment(18)] },
+        { day: "Tue", metric: "5 gaps", segments: [focusSegment(12), gapSegment(4), focusSegment(6, "short"), gapSegment(5), focusSegment(26, "deep"), gapSegment(6), focusSegment(5, "short"), gapSegment(4), focusSegment(20), gapSegment(5), focusSegment(7, "short")] },
+        { day: "Wed", metric: "3 gaps", segments: [focusSegment(34, "deep"), gapSegment(7), focusSegment(18), gapSegment(4), focusSegment(29, "deep"), gapSegment(3), focusSegment(5, "short")] },
+        { day: "Thu", metric: "5 gaps", segments: [focusSegment(7, "short"), gapSegment(4), focusSegment(5, "tiny"), gapSegment(6), focusSegment(22), gapSegment(10, "heavy"), focusSegment(4, "tiny"), gapSegment(5), focusSegment(18), gapSegment(7), focusSegment(12)] },
+        { day: "Fri", metric: "3 gaps", segments: [focusSegment(30, "deep"), gapSegment(6), focusSegment(8, "short"), gapSegment(5), focusSegment(34, "deep"), gapSegment(4), focusSegment(13)] },
+        { day: "Sat", metric: "4 gaps", segments: [focusSegment(6, "short"), gapSegment(8, "heavy"), focusSegment(16), gapSegment(5), focusSegment(7, "short"), gapSegment(12, "heavy"), focusSegment(22, "deep"), gapSegment(6), focusSegment(18)] },
+        { day: "Sun", metric: "4 gaps", segments: [focusSegment(20), gapSegment(10, "heavy"), focusSegment(5, "short"), gapSegment(6), focusSegment(12), gapSegment(8, "heavy"), focusSegment(24, "deep"), gapSegment(5), focusSegment(10)] },
+      ],
+      "mixed-blocks": [
+        { day: "Mon", metric: "2 long / 5 short", segments: [focusSegment(26, "deep"), gapSegment(4), focusSegment(4, "tiny"), gapSegment(4), focusSegment(7, "short"), gapSegment(5), focusSegment(24), gapSegment(7), focusSegment(6, "short"), gapSegment(4), focusSegment(9, "short")] },
+        { day: "Tue", metric: "1 long / 9 short", segments: [focusSegment(4, "short"), gapSegment(3), focusSegment(5, "short"), gapSegment(4), focusSegment(22, "deep"), gapSegment(5), ...shortRun(4, 3, 3), focusSegment(13), gapSegment(5), focusSegment(7, "short")] },
+        { day: "Wed", metric: "3 long / 2 short", segments: [focusSegment(31, "deep"), gapSegment(6), focusSegment(8, "short"), gapSegment(4), focusSegment(20), gapSegment(5), focusSegment(22, "deep"), gapSegment(2), focusSegment(2, "tiny")] },
+        { day: "Thu", metric: "2 long / 10 short", segments: [focusSegment(18), gapSegment(5), ...shortRun(5, 2, 3), focusSegment(19, "deep"), gapSegment(6), focusSegment(4, "short"), gapSegment(5), focusSegment(8, "short"), gapSegment(6), focusSegment(4, "short")] },
+        { day: "Fri", metric: "2 long / 4 short", segments: [focusSegment(23), gapSegment(4), focusSegment(6, "short"), gapSegment(4), focusSegment(30, "deep"), gapSegment(6), focusSegment(5, "short"), gapSegment(4), focusSegment(18)] },
+        { day: "Sat", metric: "1 long / 12 short", segments: [...shortRun(5, 2, 3), focusSegment(28, "deep"), gapSegment(6), ...shortRun(4, 2, 3), focusSegment(15)] },
+        { day: "Sun", metric: "2 long / 8 short", segments: [focusSegment(20), gapSegment(4), ...shortRun(4, 2, 3), focusSegment(23, "deep"), gapSegment(6), focusSegment(5, "short"), gapSegment(5), focusSegment(10), gapSegment(4), focusSegment(7, "short")] },
+      ],
+    };
+
+    const plot = document.getElementById("focused-hours-plot");
+    const axis = document.getElementById("focused-hours-axis");
+    const score = document.getElementById("hours-range-score");
+    const copy = document.getElementById("hours-range-copy");
+    const focusTotalScore = document.getElementById("focus-total-score");
+    const rhythmScore = document.getElementById("rhythm-score");
+    const modeButtons = document.querySelectorAll("[data-range-mode]");
+    const rangeDetailSelect = document.getElementById("range-detail-select");
+    const rangeModeNote = document.getElementById("range-mode-note");
+    const maxHours = 6;
+    const gapDayMaxFocusedHours = 6.2;
+    let selectedMode = "recent";
+    let selectedRecentRange = "7";
+    let selectedMonth = "2026-04";
+    let selectedView = selectedRecentRange;
+
+    const gapDayStartHours = {
+      Mon: 8.5,
+      Tue: 8.75,
+      Wed: 8.25,
+      Thu: 8.5,
+      Fri: 8.75,
+      Sat: 10.0,
+      Sun: 10.25,
+    };
+
+    function formatClock(decimalHours) {
+      const totalMinutes = Math.round(decimalHours * 60);
+      const hours24 = Math.floor(totalMinutes / 60) % 24;
+      const minutes = totalMinutes % 60;
+      const period = hours24 >= 12 ? "pm" : "am";
+      let hours12 = hours24 % 12;
+      if (hours12 === 0) hours12 = 12;
+      return `${hours12}:${String(minutes).padStart(2, "0")}${period}`;
+    }
+
+    function summarizeGapRow(row) {
+      const focusSegments = row.segments.filter(segment => segment.type === "focus");
+      const focusWidth = focusSegments.reduce((sum, segment) => sum + segment.width, 0);
+      const gapWidth = row.segments
+        .filter(segment => segment.type === "gap")
+        .reduce((sum, segment) => sum + segment.width, 0);
+      const hours = (focusWidth / 100) * gapDayMaxFocusedHours;
+      const startHour = row.startHour ?? gapDayStartHours[row.day] ?? 8.5;
+      const estimatedSpan = Math.max(hours + 0.75, hours + (gapWidth / 100) * 4.8 + 0.45);
+      const endHour = Math.min(22, startHour + estimatedSpan);
+      const spanHours = Math.max(0.5, endHour - startHour);
+      const focusPercent = Math.min(100, Math.round((hours / spanHours) * 100));
+
+      return {
+        hoursText: `${hours.toFixed(1)}h`,
+        spanText: `${spanHours.toFixed(1)}h`,
+        ratioText: `${hours.toFixed(1)}h / ${spanHours.toFixed(1)}h`,
+        percentText: `${focusPercent}%`,
+        startText: formatClock(startHour),
+        endText: formatClock(endHour),
+      };
+    }
+
+    function renderAxis(days, range) {
+      const weekdays = days.map(([weekday]) => `<div class="axis-cell weekday-cell">${weekday}</div>`).join("");
+      const dates = days.map(([, , , day]) => `<div class="axis-cell">${day}</div>`).join("");
+      const monthDividers = days.map(([, monthName], index) => {
+        if (!monthName) return "";
+        const nextMonthIndex = days.findIndex(([, nextMonthName], nextIndex) => nextIndex > index && nextMonthName);
+        const span = (nextMonthIndex === -1 ? days.length : nextMonthIndex) - index;
+        return `<div class="month-divider" style="grid-column: ${index + 1} / span ${span}">| ${monthName}</div>`;
+      }).join("");
+      return [
+        `<div class="axis-grid weekday-row">${weekdays}</div>`,
+        `<div class="axis-grid date-row">${dates}</div>`,
+        `<div class="axis-grid month-row">${monthDividers}</div>`,
+      ].join("");
+    }
+
+    function renderFocusedHours(viewKey) {
+      const data = focusedHourRanges[viewKey];
+      const dayCount = data.days.length;
+      plot.dataset.range = dayCount > 7 ? "30" : "7";
+      axis.dataset.range = dayCount > 7 ? "30" : "7";
+      plot.style.gridTemplateColumns = `repeat(${dayCount}, minmax(0, 1fr))`;
+      axis.style.setProperty("--day-count", dayCount);
+      score.textContent = data.score;
+      copy.textContent = data.copy;
+      focusTotalScore.textContent = data.focusTotalScore;
+      rhythmScore.textContent = data.rhythmScore;
+      plot.innerHTML = data.days.map(([, , monthNumber, day, hours, dayScore]) => {
+        const height = Math.max(0, Math.min(100, (hours / maxHours) * 100));
+        const zeroClass = hours === 0 ? " zero" : "";
+        const hoursText = `${hours.toFixed(1)} focused hr${hours === 1 ? "" : "s"}`;
+        const tooltip = `${monthNumber}/${day}&#10;${hoursText}&#10;Score ${dayScore}`;
+        return `<div class="day-column" data-tooltip="${tooltip}" title="${monthNumber}/${day} - ${hoursText} - Score ${dayScore}"><div class="bar${zeroClass}" style="height: ${height}%"></div></div>`;
+      }).join("");
+      axis.innerHTML = renderAxis(data.days, viewKey);
+      syncRangeControls(viewKey);
+    }
+
+    function syncRangeControls(viewKey) {
+      const mode = viewKey === "7" || viewKey === "30" ? "recent" : "month";
+      modeButtons.forEach(button => {
+        const active = button.dataset.rangeMode === mode;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      renderRangeDetailSelect(mode);
+      rangeModeNote.textContent = mode === "recent"
+        ? "Recent shows your latest focus pattern. Choose the last 7 or 30 days."
+        : "By month shows your focus pattern for a calendar month. April 2026 is selected by default.";
+    }
+
+    function setDashboardView(viewKey) {
+      selectedView = viewKey;
+      selectedMode = viewKey === "7" || viewKey === "30" ? "recent" : "month";
+      renderFocusedHours(viewKey);
+    }
+
+    function renderRangeDetailSelect(mode) {
+      const options = mode === "recent"
+        ? [
+          ["7", "Last 7 days"],
+          ["30", "Last 30 days"],
+        ]
+        : [
+          ["2026-04", "April 2026"],
+          ["2026-03", "March 2026"],
+          ["2026-02", "February 2026"],
+        ];
+      const selectedValue = mode === "recent" ? selectedRecentRange : selectedMonth;
+      const nextOptions = options.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+
+      if (rangeDetailSelect.innerHTML !== nextOptions) {
+        rangeDetailSelect.innerHTML = nextOptions;
+      }
+      rangeDetailSelect.value = selectedValue;
+    }
+
+    function renderGapCharts() {
+      document.querySelectorAll("[data-gap-chart]").forEach(chart => {
+        const rows = gapChartVariants[chart.dataset.gapChart] || [];
+        const layout = chart.dataset.gapLayout || "ratio";
+        chart.innerHTML = rows.map(row => {
+          const summary = summarizeGapRow(row);
+          const ratioMarkup = `<span class="gap-ratio"><span class="gap-ratio-focus">${summary.hoursText}</span><span class="gap-ratio-divider">/</span><span class="gap-ratio-total">${summary.spanText}</span></span>`;
+          const segments = row.segments.map(segment => {
+            const className = segment.type === "gap"
+              ? `gap-space ${segment.tone || ""}`
+              : `gap-focus ${segment.tone || ""}`;
+            return `<i class="${className.trim()}" style="width: ${segment.width}%"></i>`;
+          }).join("");
+
+          const metrics = layout === "hours-first"
+            ? `<div class="gap-metrics hours-first"><div class="gap-main"><span class="gap-hours-big">${ratioMarkup}</span></div><div class="gap-percent-col"><span class="gap-percent-badge">${summary.percentText}</span></div></div>`
+            : `<div class="gap-metrics ratio"><div class="gap-main"><span class="gap-primary">${ratioMarkup}</span></div><div class="gap-percent-col"><span class="gap-percent">${summary.percentText}</span><div class="gap-meter"><div class="gap-meter-fill" style="width: ${summary.percentText}"></div></div></div></div>`;
+
+          return `<div class="gap-row"><span class="gap-day">${row.day}</span><div class="gap-rail"><span class="gap-time">${summary.startText}</span><div class="gap-track" title="${summary.startText} - ${summary.endText} - ${summary.hoursText} of ${summary.spanText} (${summary.percentText})">${segments}</div><span class="gap-time">${summary.endText}</span></div>${metrics}</div>`;
+        }).join("");
+      });
+    }
+
+    modeButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        if (button.dataset.rangeMode === "recent") {
+          setDashboardView(selectedRecentRange);
+          return;
+        }
+        setDashboardView(selectedMonth);
+      });
+    });
+
+    rangeDetailSelect.addEventListener("change", () => {
+      if (selectedMode === "recent") {
+        selectedRecentRange = rangeDetailSelect.value;
+        setDashboardView(selectedRecentRange);
+        return;
+      }
+      selectedMonth = rangeDetailSelect.value;
+      setDashboardView(selectedMonth);
+    });
+
+    renderFocusedHours(selectedView);
+    renderGapCharts();
+  </script>
+</body>
+</html>
