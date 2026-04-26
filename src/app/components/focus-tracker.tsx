@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Dashboard } from "./dashboard";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 interface Session {
@@ -460,6 +461,7 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
   const [days] = useState<DayData[]>(generateMockData);
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [statsOpen, setStatsOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [dailyTarget, setDailyTarget] = useState(4);
@@ -521,21 +523,31 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
         justifyContent: "center",
         fontFamily: "-apple-system, 'Inter', system-ui, sans-serif",
         padding: 20,
+        overflowX: "auto",
       }}
     >
-      {/* App window shell */}
+      {/* App window + side panel wrapper */}
       <div
         style={{
-          width: "95vw",
-          maxWidth: 1550,
+          display: "flex",
           height: "min(92vh, 1080px)",
           background: "#0d0e16",
           borderRadius: 28,
           border: "1px solid rgba(255,255,255,0.06)",
-          display: "flex",
           overflow: "hidden",
           boxShadow: "0 40px 120px rgba(0,0,0,0.6)",
+          flexShrink: 0,
+        }}
+      >
+      {/* App window shell */}
+      <div
+        style={{
+          width: "min(95vw, 1550px)",
+          height: "100%",
+          display: "flex",
+          overflow: "hidden",
           position: "relative",
+          flexShrink: 0,
         }}
       >
         {/* ─── Sidebar ─── */}
@@ -639,7 +651,7 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
           {/* Stats link */}
           <div style={{ padding: "0 14px 4px" }}>
             <button
-              onClick={onViewStats}
+              onClick={() => setStatsOpen(true)}
               style={{
                 width: "100%",
                 background: "rgba(129,140,248,0.06)",
@@ -759,6 +771,33 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
               <span style={{ color: "#4b5090", fontSize: 13 }}>
                 {selectedDay.sessions.length} item{selectedDay.sessions.length !== 1 ? "s" : ""}
               </span>
+              <button
+                onClick={() => setStatsOpen((s) => !s)}
+                title={statsOpen ? "Hide stats panel" : "Show stats panel"}
+                style={{
+                  background: "none",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 6,
+                  padding: "4px 6px",
+                  marginLeft: 8,
+                  cursor: "pointer",
+                  color: statsOpen ? "#818cf8" : "#4b5090",
+                  display: "flex",
+                  alignSelf: "center",
+                  transition: "color 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = "#818cf8";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = statsOpen ? "#818cf8" : "#4b5090";
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.2" />
+                  <line x1="9" y1="1" x2="9" y2="13" stroke="currentColor" strokeWidth="1.2" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -865,6 +904,33 @@ export function FocusTracker({ onLogout, onViewStats }: { onLogout: () => void; 
                 onToggle={toggleTimer}
                 dailyTarget={dailyTarget}
                 onEditTarget={handleEditTarget}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+        {/* ─── Stats Side Panel (sibling of shell, extends wrapper outward) ─── */}
+        <div
+          style={{
+            width: statsOpen ? 600 : 0,
+            minWidth: statsOpen ? 600 : 0,
+            height: "100%",
+            background: "#080910",
+            transition: "width 0.45s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.45s cubic-bezier(0.16, 1, 0.3, 1)",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            borderLeft: statsOpen ? "1px solid rgba(255,255,255,0.06)" : "none",
+            flexShrink: 0,
+          }}
+        >
+          {/* Panel content */}
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+            {statsOpen && (
+              <Dashboard
+                userName="Andrew"
+                onLogout={onLogout}
               />
             )}
           </div>
